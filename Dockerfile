@@ -69,9 +69,74 @@ RUN \
     git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git -b ${SD_WEBUI_VERSION:-v1.6.0}
 WORKDIR /home/user/stable-diffusion-webui
 
+Run git clone https://huggingface.co/embed/negative embeddings/negative && \
+    git clone https://huggingface.co/embed/lora models/Lora/positive
+
+# Clone the Automatic1111 Extensions
+RUN git clone --depth=1 https://github.com/Mikubill/sd-webui-controlnet.git extensions/sd-webui-controlnet && \
+    git clone --depth=1 https://github.com/Gourieff/sd-webui-reactor.git extensions/sd-webui-reactor && \
+    git clone --depth=1 https://github.com/zanllp/sd-webui-infinite-image-browsing.git extensions/infinite-image-browsing && \
+    git clone --depth=1 https://github.com/Bing-su/adetailer.git extensions/adetailer && \
+    git clone --depth=1 https://github.com/Coyote-A/ultimate-upscale-for-automatic1111 extensions/ultimate-upscale-for-automatic1111 && \
+    git clone --depth=1 https://github.com/richrobber2/canvas-zoom extensions/canvas-zoom && \
+    git clone --depth=1 https://github.com/yankooliveira/sd-webui-photopea-embed extensions/sd-webui-photopea-embed && \
+    git clone --depth=1 https://github.com/etherealxx/batchlinks-webui extensions/batchlinks-webui && \
+    git clone --depth=1 https://github.com/continue-revolution/sd-webui-animatediff extensions/sd-webui-animatediff
+
 RUN \
     mkdir /home/user/stable-diffusion-webui/outputs \
     && mkdir /home/user/stable-diffusion-webui/styles
+    
+RUN cd /home/user/stable-diffusion-webui/extensions/sd-webui-animatediff/model && \
+    wget https://civitai.com/api/download/models/159987 --content-disposition && \
+    cd /home/user/stable-diffusion-webui/models/Stable-diffusion && \
+    wget https://civitai.com/api/download/models/148087 --content-disposition && \
+    wget https://civitai.com/api/download/models/179525 --content-disposition && \
+    cd /home/user/stable-diffusion-webui/models/Lora && \
+    wget https://civitai.com/api/download/models/132876 --content-disposition && \
+    mkdir -p /home/user/stable-diffusion-webui/models/ESRGAN && \
+    cd /home/user/stable-diffusion-webui/models/ESRGAN && \
+    wget https://huggingface.co/embed/upscale/resolve/main/4x-UltraSharp.pth 
+    
+# Add inswapper model for the ReActor extension
+RUN mkdir -p /home/user/stable-diffusion-webui/models/insightface && \
+    cd //home/user/stable-diffusion-webui/models/insightface && \
+    wget https://huggingface.co/ezioruan/inswapper_128.onnx/resolve/main/inswapper_128.onnx
+    
+WORKDIR /home/user/stable-diffusion-webui/extensions/sd-webui-controlnet/models
+RUN wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11p_sd15_canny_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11p_sd15_canny_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11f1p_sd15_depth_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11f1p_sd15_depth_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11p_sd15_normalbae_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11p_sd15_normalbae_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11p_sd15_mlsd_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11p_sd15_mlsd_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11p_sd15_openpose_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11p_sd15_openpose_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11p_sd15_lineart_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11p_sd15s2_lineart_anime_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11p_sd15_lineart_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11p_sd15s2_lineart_anime_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11p_sd15_inpaint_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11p_sd15_inpaint_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11p_sd15_scribble_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11p_sd15_scribble_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11p_sd15_softedge_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11p_sd15_softedge_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11f1e_sd15_tile_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11f1e_sd15_tile_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11e_sd15_shuffle_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11e_sd15_shuffle_fp16.yaml && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/resolve/main/control_v11e_sd15_ip2p_fp16.safetensors && \
+    wget https://huggingface.co/ckpt/ControlNet-v1-1/raw/main/control_v11e_sd15_ip2p_fp16.yaml && \
+    wget https://huggingface.co/monster-labs/control_v1p_sd15_qrcode_monster/resolve/main/control_v1p_sd15_qrcode_monster.safetensors && \
+    wget https://huggingface.co/monster-labs/control_v1p_sd15_qrcode_monster/resolve/main/control_v1p_sd15_qrcode_monster.yaml && \
+    wget https://huggingface.co/lllyasviel/sd_control_collection/resolve/main/ip-adapter_sd15.pth && \
+    wget https://huggingface.co/h94/IP-Adapter/resolve/main/models/ip-adapter-plus-face_sd15.bin && \
+    wget https://huggingface.co/h94/IP-Adapter/resolve/main/models/ip-adapter-plus_sd15.bin 
+    
+COPY ui-config.json /home/user/stable-diffusion-webui/
 
 # RUN \
 #     wget -O \

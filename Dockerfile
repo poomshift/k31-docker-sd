@@ -67,6 +67,16 @@ USER user
 # CLONE AND PREPARE FOR THE SETUP OF SD-WEBUI
 RUN \ 
     git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git -b ${SD_WEBUI_VERSION:-v1.6.0}
+
+
+WORKDIR /home/user/stable-diffusion-webui
+RUN python3 -m venv --system-site-packages /venv && \
+    source /venv/bin/activate && \
+    pip install --no-cache-dir torch==2.0.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
+    pip install --no-cache-dir xformers && \
+    pip install httpx==0.24.0 && \
+    pip install onnxruntime-gpu && \
+    deactivate
 WORKDIR /home/user/stable-diffusion-webui
 
 Run git clone https://huggingface.co/embed/negative embeddings/negative && \
@@ -100,7 +110,7 @@ RUN cd /home/user/stable-diffusion-webui/extensions/sd-webui-animatediff/model &
     
 # Add inswapper model for the ReActor extension
 RUN mkdir -p /home/user/stable-diffusion-webui/models/insightface && \
-    cd //home/user/stable-diffusion-webui/models/insightface && \
+    cd /home/user/stable-diffusion-webui/models/insightface && \
     wget https://huggingface.co/ezioruan/inswapper_128.onnx/resolve/main/inswapper_128.onnx
     
 WORKDIR /home/user/stable-diffusion-webui/extensions/sd-webui-controlnet/models

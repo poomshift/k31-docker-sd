@@ -1,5 +1,5 @@
-ARG BASEIMAGE
-ARG BASETAG
+ARG BASEIMAGE=nvidia/cuda
+ARG BASETAG=11.7.1-cudnn8-devel-ubuntu22.04
 
 # STAGE FOR CACHING APT PACKAGE LIST
 FROM ${BASEIMAGE}:${BASETAG} as stage_apt
@@ -29,13 +29,30 @@ ENV \
 COPY aptDeps.txt /tmp/aptDeps.txt
 
 # INSTALL APT DEPENDENCIES USING CACHE OF stage_apt
-RUN \
-    --mount=type=cache,target=/var/cache/apt,from=stage_apt,source=/var/cache/apt \
-    --mount=type=cache,target=/var/lib/apt,from=stage_apt,source=/var/lib/apt \
-    --mount=type=cache,target=/etc/apt/sources.list.d,from=stage_apt,source=/etc/apt/sources.list.d \
-	apt-get install --no-install-recommends -y $(cat /tmp/aptDeps.txt) \
-    && rm -rf /tmp/*
-
+#RUN \
+   #--mount=type=cache,target=/var/cache/apt,from=stage_apt,source=/var/cache/apt \
+    #--mount=type=cache,target=/var/lib/apt,from=stage_apt,source=/var/lib/apt \
+    #--mount=type=cache,target=/etc/apt/sources.list.d,from=stage_apt,source=/etc/apt/sources.list.d \
+	#apt-get install --no-install-recommends -y $(cat /tmp/aptDeps.txt) \
+    #&& rm -rf /tmp/*
+	
+RUN apt update && \
+    apt -y upgrade && \
+    apt install -y --no-install-recommends \
+        curl \
+		git \
+		google-perftools \
+		libfontconfig1-dev \
+		libgl1-mesa-glx \
+		libglib2.0-0 \
+		libglib2.0-0 \
+		neovim \
+		python3 \
+		python3-dev \
+		python3-pip \
+		python3-venv \
+		sudo \
+		wget 
 # ADD NON-ROOT USER user FOR RUNNING THE WEBUI
 RUN \
     groupadd user \
@@ -65,13 +82,12 @@ WORKDIR /home/user
 USER user
 
 # CLONE AND PREPARE FOR THE SETUP OF SD-WEBUI
-RUN \ 
-    git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git -b ${SD_WEBUI_VERSION:-v1.6.0}
+RUN git clone https://github.com/AUTOMATIC1111/stable-diffusion-webui.git
 
 
 WORKDIR /home/user/stable-diffusion-webui
-RUN python3 -m venv --system-site-packages /venv && \
-    source /venv/bin/activate && \
+RUN python3 -m venv --system-site-packages /home/user/venv && \
+    source /home/user/venv/bin/activate && \
     pip install --no-cache-dir torch==2.0.1 torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118 && \
     pip install --no-cache-dir xformers && \
     pip install httpx==0.24.0 && \
@@ -154,6 +170,7 @@ COPY ui-config.json /home/user/stable-diffusion-webui/
 #         https://huggingface.co/runwayml/stable-diffusion-v1-5/resolve/main/v1-5-pruned-emaonly.safetensors \
 #     && ./webui.sh --xformers --skip-torch-cuda-test --no-download-sd-model --exit
 
+WORKDIR /home/user/stable-diffusion-webui
 RUN \
     ./webui.sh --xformers --skip-torch-cuda-test --no-download-sd-model --exit
 

@@ -118,6 +118,7 @@ RUN cd /home/user/stable-diffusion-webui/extensions/sd-webui-animatediff/model &
     cd /home/user/stable-diffusion-webui/models/Stable-diffusion && \
     wget https://civitai.com/api/download/models/148087 --content-disposition && \
     wget https://civitai.com/api/download/models/179525 --content-disposition && \
+    mkdir -p /home/user/stable-diffusion-webui/models/Lora && \
     cd /home/user/stable-diffusion-webui/models/Lora && \
     wget https://civitai.com/api/download/models/132876 --content-disposition && \
     mkdir -p /home/user/stable-diffusion-webui/models/ESRGAN && \

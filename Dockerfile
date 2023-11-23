@@ -180,7 +180,7 @@ RUN \
         https://greasyfork.org/scripts/452929-webui-%ED%83%9C%EA%B7%B8-%EC%9E%90%EB%8F%99%EC%99%84%EC%84%B1/code/WebUI%20%ED%83%9C%EA%B7%B8%20%EC%9E%90%EB%8F%99%EC%99%84%EC%84%B1.user.js
 
 # COPY entrypoint.sh
-COPY --chmod=775 scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY --chmod=755 scripts/entrypoint.sh /usr/local/bin/entrypoint.sh
 USER root
 
 # PORT AND ENTRYPOINT, USER SETTINGS

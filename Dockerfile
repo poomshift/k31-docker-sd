@@ -95,8 +95,8 @@ RUN python3 -m venv --system-site-packages /home/user/venv && \
     deactivate
 WORKDIR /home/user/stable-diffusion-webui
 
-Run git clone https://huggingface.co/embed/negative embeddings/negative && \
-    git clone https://huggingface.co/embed/lora models/Lora/positive
+#Run git clone https://huggingface.co/embed/negative embeddings/negative && \
+    #git clone https://huggingface.co/embed/lora models/Lora/positive
 
 # Clone the Automatic1111 Extensions
 RUN git clone --depth=1 https://github.com/Mikubill/sd-webui-controlnet.git extensions/sd-webui-controlnet && \
